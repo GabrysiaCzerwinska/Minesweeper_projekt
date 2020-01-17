@@ -8,28 +8,47 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MainWindow"
     Width="800"
-    Height="450"
+    Height="600"
     mc:Ignorable="d">
-    <Grid Background="Black">
+    <Window.Resources>
+        <BitmapImage x:Key="backgroudImage" UriSource="/Minesweeper;component/Assets/background.png" />
+        <ImageBrush x:Key="backgroundImageBrush" ImageSource="{StaticResource backgroudImage}" />
+        <SolidColorBrush x:Key="PlayFieldBrush" Color="#BE080830" />
+    </Window.Resources>
+    <Window.Style>
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="Background" Value="{StaticResource backgroundImageBrush}" />
+        </Style>
+    </Window.Style>
+    <Grid
+        Width="Auto"
+        Height="Auto"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="{StaticResource PlayFieldBrush}">
 
         <ItemsControl
+            x:Name="FieldHolder"
+            Margin="20"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            ItemsSource="{Binding testGrid}">
+            ItemsSource="{Binding PlayArea}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <controls:FieldControl
-                        Click="Test1"
-                        InnerContent="{Binding TestString}"
-                        RightClick="Test2"
-                        Size="30"
                         Margin="2"
-                        Color="White" />
+                        Click="LeftButtonClick"
+                        FieldCovered="{Binding Covered}"
+                        FieldIndex="{Binding Index}"
+                        FieldValue="{Binding DangerLevel}"
+                        IsMine="{Binding IsMine}"
+                        RightClick="RightButtonClick"
+                        Size="34" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="{Binding playAreaWidth}" Rows="{Binding playAreaHeight}" />
+                    <UniformGrid Columns="{Binding PlayAreaSize}" Rows="{Binding PlayAreaSize}" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
