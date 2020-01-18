@@ -1,36 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Mineswepper {
-    class Field {
+﻿namespace Mineswepper
+{
+    class Field
+    {
         public int dangerLevel;
-        public bool isBombed;
+        public bool isMined;
         public bool isSuspected;
         public bool isExposed;
 
-        public Field() {
+        public Field()
+        {
             dangerLevel = 0;
-            isBombed = false;
+            isMined = false;
             isSuspected = false;
             isExposed = false;
         }
 
-        public void increaseDangerLevel() {
+        public void increaseDangerLevel()
+        {
             dangerLevel++;
         }
 
-        public void bomb() {
-            isBombed = true;
+        public void mine()
+        {
+            isMined = true;
         }
 
-        public void suspect() {
-            isSuspected = true;
+        public void changeSuspect()
+        {
+            isSuspected = isSuspected ? false : true;
         }
 
-        public void expose() {
+        public void expose()
+        {
             isExposed = true;
         }
     }
