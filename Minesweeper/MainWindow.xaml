@@ -5,6 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minesweeper"
         mc:Ignorable="d"
-        Title="CyberMinesweeper 2077" Height="480" Width="480" Background="#FF080830">
+        Title="Cyber Minesweeper 2077" Height="480" Width="480" Background="#FF080830">
     <Grid x:Name="grid" HorizontalAlignment="Center" VerticalAlignment="Center"></Grid>
 </Window>
