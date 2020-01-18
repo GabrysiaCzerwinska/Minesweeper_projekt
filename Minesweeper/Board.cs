@@ -35,10 +35,10 @@ namespace Minesweeper
                     board[i, j] = new Field();
 
             int k = mineNumber;
+            Random random = new Random();
 
             while (k > 0)
             {
-                Random random = new Random();
                 int row = random.Next(0, size);
                 int column = random.Next(0, size);
 

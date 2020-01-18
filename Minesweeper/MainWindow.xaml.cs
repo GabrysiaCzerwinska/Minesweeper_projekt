@@ -8,7 +8,7 @@ namespace Minesweeper
         {
             InitializeComponent();
 
-            Board board = new Board(10, 10, grid);
+            Board board = new Board(16, 48, grid);
         }
     }
 }
