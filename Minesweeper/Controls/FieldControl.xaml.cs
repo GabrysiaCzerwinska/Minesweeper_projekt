@@ -1,5 +1,4 @@
-﻿using Mineswepper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -22,13 +21,6 @@ namespace Minesweeper.Controls
     /// Interaction logic for FieldControl.xaml
     /// </summary>
     /// 
-
-    public enum FieldStateTypes
-    {
-        Covered,
-        UnCovered,
-    }
-
     public partial class FieldControl : UserControl, INotifyPropertyChanged
     {
         private int previousValue = -1;
@@ -37,19 +29,8 @@ namespace Minesweeper.Controls
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty FieldStateProperty = DependencyProperty.Register(
-            "FieldState", typeof(FieldStateTypes), typeof(FieldControl), new PropertyMetadata(FieldStateTypes.Covered));
-        public FieldStateTypes FieldState
-        {
-            get => (FieldStateTypes)GetValue(FieldStateProperty);
-            set
-            {
-                SetValue(FieldStateProperty, value);
-                NotifyPropertyChanged();
-            }
-        }
         public static readonly DependencyProperty FieldValueProperty = DependencyProperty.Register(
-            "FieldValue", typeof(int), typeof(FieldControl), new PropertyMetadata(0));
+            "FieldValue", typeof(int), typeof(FieldControl), new PropertyMetadata(0, new PropertyChangedCallback(OnDependencyPropertyChanged)));
         public int FieldValue
         {
             get => (int)GetValue(FieldValueProperty);
@@ -58,26 +39,16 @@ namespace Minesweeper.Controls
                 NotifyPropertyChanged();
             }
         }
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
-        public static readonly DependencyProperty RightClickProperty = DependencyProperty.Register(
-            "RightClick", typeof(RoutedEventHandler), typeof(FieldControl), new PropertyMetadata());
-        public RoutedEventHandler RightClick { get => (RoutedEventHandler)GetValue(RightClickProperty); set => SetValue(RightClickProperty, value); }
-        public static readonly DependencyProperty ClickProperty = DependencyProperty.Register(
-            "Click", typeof(RoutedEventHandler), typeof(FieldControl), new PropertyMetadata());
-        public RoutedEventHandler Click { get => (RoutedEventHandler)GetValue(ClickProperty); set => SetValue(ClickProperty, value); }
-
+        #region INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        #endregion
+        #region Size property
         public static readonly DependencyProperty SizeProperty = DependencyProperty.Register(
             "Size", typeof(double), typeof(FieldControl), new PropertyMetadata());
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public double Size { get => (double)GetValue(SizeProperty); set => SetValue(SizeProperty, value); }
-
-
+        #endregion
         public static readonly DependencyProperty FieldIndexProperty = DependencyProperty.Register(
             "FieldIndex", typeof(int), typeof(FieldControl), new PropertyMetadata());
 
@@ -93,81 +64,71 @@ namespace Minesweeper.Controls
             get => (bool)GetValue(FieldCoveredProperty);
             set
             {
-                if (value)
-                {
-                    FieldState = FieldStateTypes.Covered;
-                }
-                else
-                {
-                    FieldState = FieldStateTypes.UnCovered;
-                }
                 SetValue(FieldCoveredProperty, value);
+                NotifyPropertyChanged();
             } 
           } 
-
-
         public static readonly DependencyProperty IsMineProperty = DependencyProperty.Register(
             "IsMine", typeof(bool), typeof(FieldControl), new PropertyMetadata(false, new PropertyChangedCallback(OnDependencyPropertyChanged)));
-        public bool IsMine
-        {
-            get => FieldValue == 1000;
-            set
-            {
-                if (value)
-                    FieldValue = 1000;
-            }
-        }
+        public bool IsMine { get => (bool)GetValue(IsMineProperty); set => SetValue(IsMineProperty, value); }
         private static void OnDependencyPropertyChanged(DependencyObject d,
         DependencyPropertyChangedEventArgs e)
         {
             var _this = (FieldControl)d;
-            if(e.Property.Name == "IsMine")
+
+            switch (e.Property.Name)
             {
-                _this.CiulWie(e);
-            }
-            if(e.Property.Name == "FieldCovered")
-            {
-                _this.ChangeFieldCovered(e);
-            }
-
-        }
-
-        private void CiulWie(DependencyPropertyChangedEventArgs e)
-        {
-            IsMine = (bool)e.NewValue;
-        }
-
-        private void ChangeFieldCovered(DependencyPropertyChangedEventArgs e)
-        {
-            FieldCovered = (bool)e.NewValue;
-        }
-
-        public static readonly DependencyProperty DuspectedProperty = DependencyProperty.Register(
-            "Suspected", typeof(bool), typeof(FieldControl), new PropertyMetadata(false));
-        public bool Suspected
-        {
-            get => FieldValue == 1001;
-            set
-            {
-                if (!value)
-                {
-                    if (previousValue != -1)
+                case "IsMine":
+                    if ((bool)e.NewValue)
+                        _this.FieldValue = 10000;
+                    break;
+                case "FieldCovered":
+                    _this.FieldCovered = (bool)e.NewValue;
+                    break;
+                case "FieldValue":
+                    _this.FieldValue = (int)e.NewValue;
+                    break;
+                case "Suspected":
+                    _this.FieldCovered = !(bool)e.NewValue;
+                    if (_this.FieldValue == 1001)
                     {
-                        FieldValue = previousValue;
-                        previousValue = -1;
+                        _this.FieldValue = _this.previousValue;
+                        _this.previousValue = -1;
                     }
-                }
-                else
-                {
-                    if (FieldState == FieldStateTypes.Covered)
+                    else
                     {
-                        previousValue = FieldValue;
-                        FieldValue = 1001;
+                        _this.previousValue = _this.FieldValue;
+                        _this.FieldValue = 1001;
                     }
-                }
+                    break;
             }
         }
-        private void Button_Click(object sender, RoutedEventArgs e) => Click?.Invoke(this, e);
-        private void Button_MouseRightButtonUp(object sender, MouseButtonEventArgs e) => RightClick?.Invoke(this, e);
+        public static readonly DependencyProperty SuspectedProperty = DependencyProperty.Register(
+            "Suspected", typeof(bool), typeof(FieldControl), new PropertyMetadata(false, new PropertyChangedCallback(OnDependencyPropertyChanged)));
+        public bool Suspected { get => (bool)GetValue(SuspectedProperty); set => SetValue(SuspectedProperty, value); }
+
+        #region LeftClick
+        public static readonly DependencyProperty LeftClickCommandProperty = DependencyProperty.Register(
+            "LeftClickCommand", typeof(ICommand), typeof(FieldControl), new PropertyMetadata());
+
+        public ICommand LeftClickCommand
+        {
+            get => (ICommand)GetValue(LeftClickCommandProperty);
+            set => SetValue(LeftClickCommandProperty, value);
+        }
+        
+        private void Button_LeftClick(object sender, RoutedEventArgs e) => LeftClickCommand.Execute(this);
+        #endregion
+
+        #region RightClick
+        public static readonly DependencyProperty RightClickCommandProperty = DependencyProperty.Register(
+            "RightClickCommand", typeof(ICommand), typeof(FieldControl), new PropertyMetadata());
+        public ICommand RightClickCommand
+        {
+            get => (ICommand)GetValue(RightClickCommandProperty);
+            set => SetValue(RightClickCommandProperty, value);
+        }
+        private void Button_RightClick(object sender, MouseButtonEventArgs e) => RightClickCommand.Execute(this);
+        #endregion
     }
 }

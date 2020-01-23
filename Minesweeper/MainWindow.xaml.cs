@@ -15,29 +15,132 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Minesweeper.Models;
+using System.Windows.Threading;
+using System.ComponentModel;
 
 namespace Minesweeper {
 
-    public partial class MainWindow : Window {
-        public int PlayAreaSize { get; set; } = 10; // Rozmiar planszy
-        public List<Field> PlayArea { get; set; }
+    public enum GameState
+    {
+        Run,
+        Defeat,
+        Victory
+    }
+
+
+    public partial class MainWindow : Window, INotifyPropertyChanged {
+        private int exposedFields = 0;
+        private bool firstClick = false;
+        private bool IsGameGoing = false;
+        private int _playAreaSize;
+        public int PlayAreaSize { get => _playAreaSize; set { _playAreaSize = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PlayAreaSize")); } } // Rozmiar planszy
+        private List<Field> _PlayArea;
+        public List<Field> PlayArea { get => _PlayArea; set { _PlayArea = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PlayArea")); } }
         private int PlayAreaSizeSquared;
-        public int MinesCount { get; set; } = 10; // Ilość min na planszy
+        private ICommand _RadioButtonChecked;
+        private GameState _gameState;
+        public GameState gameState { get => _gameState; set { _gameState = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("GameState")); } }
+        public ICommand RadioButtonChecked
+        {
+            get => _RadioButtonChecked;
+            set
+            {
+                _RadioButtonChecked = value;
+            }
+        }
+
+        private ICommand _ClickFaceButton;
+
+        public ICommand ClickFaceButton
+        {
+            get => _ClickFaceButton;
+            set
+            {
+                _ClickFaceButton = value;
+            }
+        }
+        private ICommand _RightFieldClick;
+
+        public ICommand RightFieldClick
+        {
+            get => _RightFieldClick;
+            set
+            {
+                _RightFieldClick = value;
+            }
+        }
+
+        private ICommand _LeftFieldClick;
+
+        public ICommand LeftFieldClick
+        {
+            get => _LeftFieldClick;
+            set
+            {
+                _LeftFieldClick = value;
+            }
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private int _flagCount;
+        public int MinesCount { get; set; }  // Ilość min na planszy
+
+        public int FlagCount { get => _flagCount; set { _flagCount = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FlagCount")); } }
+        private DispatcherTimer timer { get; set; }
+
+        private int _gameTime = 0;
+
+        public int GameTime { get => _gameTime; set { _gameTime = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("GameTime")); } } 
         public MainWindow() {
             
             InitializeComponent();
-            PlayAreaSizeSquared = PlayAreaSize * PlayAreaSize;
-            PlayArea = new List<Field>(PlayAreaSizeSquared);
-            generatePlayArea();
-            placeMines();
+            RadioButtonChecked = new RelayCommand(ChangeGameMode, param => !IsGameGoing);
+            ClickFaceButton = new RelayCommand(Button_Click, param => true);
+            LeftFieldClick = new RelayCommand(LeftButtonClick, param => true);
+            RightFieldClick = new RelayCommand(RightButtonClick, param => true);
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += Timer_Tick;
             DataContext = this;
+            ChangeGameMode("easy");
+            
         }
-        private void generatePlayArea()
+
+        private void ChangeGameMode(object mode)
         {
+           switch((string)mode)
+            {
+                case "easy":
+                    PlayAreaSize = 8;
+                    MinesCount = FlagCount = 10;
+                    break;
+                case "medium":
+                    PlayAreaSize = 16;
+                    MinesCount = FlagCount = 40;
+                    break;
+                case "hard":
+                    PlayAreaSize = 22;
+                    MinesCount = FlagCount = 100;
+                    break;
+            }
+            resetGame();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+
+            GameTime += 1;
+        }
+
+        private List<Field> GeneratePlayArea()
+        {
+            List<Field> result = new List<Field>(PlayAreaSizeSquared);
             for(int i = 0; i < PlayAreaSizeSquared; ++i)
             {
-                PlayArea.Add(new Field { Index = i });
+                result.Add(new Field { Index = i });
             }
+            return result;
         }
         private int GetProperIndex(int row, int col) => row * PlayAreaSize + col;
         private void placeMines()
@@ -53,76 +156,155 @@ namespace Minesweeper {
 
                     var pickedField = PlayArea[nextPlace];
 
-                    if(!pickedField.IsMine)
+                    if(!pickedField.IsMine && pickedField.Covered && !pickedField.FirstClicked)
                     {
                         int currentColumn = nextPlace % PlayAreaSize;
                         int currentRow = nextPlace / PlayAreaSize;
                         // Place bomb
                         pickedField.IsMine = bombPlaced = true;
-
-                        // Increase risk of neighbours
-                        if(currentRow < (PlayAreaSize - 1))
-                            PlayArea[GetProperIndex(currentRow + 1, currentColumn)].DangerLevel += 1;
-                        if(currentRow > 0)
-                            PlayArea[GetProperIndex(currentRow - 1, currentColumn)].DangerLevel += 1;
-                        if(currentColumn < (PlayAreaSize - 1))
-                            PlayArea[GetProperIndex(currentRow, currentColumn + 1)].DangerLevel += 1;
-                        if (currentColumn > 0)
-                            PlayArea[GetProperIndex(currentRow, currentColumn - 1)].DangerLevel += 1;
-                        // Diagonal check
-                        // Pomysł Kamila <3 Koksu <3
-                        try
-                        {
-                            PlayArea[GetProperIndex(currentRow - 1, currentColumn - 1)].DangerLevel += 1;
-                        }
-                        catch(ArgumentOutOfRangeException) { };
-
-                        try
-                        {
-                            PlayArea[GetProperIndex(currentRow - 1, currentColumn + 1)].DangerLevel += 1;
-                        }
-                        catch(ArgumentOutOfRangeException) { };
-                        try
-                        {
-                            PlayArea[GetProperIndex(currentRow + 1, currentColumn - 1)].DangerLevel += 1;
-                        }
-                        catch(ArgumentOutOfRangeException) { };
-                        try
-                        {
-                            PlayArea[GetProperIndex(currentRow + 1, currentColumn + 1)].DangerLevel += 1;
-                        }
-                        catch(ArgumentOutOfRangeException) { };
                     }
 
                 }
                 
             }
+            setNeighboursDangerLevel();
 
         }
 
-        private void LeftButtonClick(object sender, RoutedEventArgs e)
+        private void setNeighboursDangerLevel()
         {
-            var field = sender as FieldControl;
-            if (field.FieldState == FieldStateTypes.Covered)
+            foreach(var field in PlayArea)
             {
-                field.FieldState = FieldStateTypes.UnCovered;
-                // TODO: Tutaj sprawdzamy czy kliknięto bombę field.IsMine :P
-                
+                if (field.IsMine)
+                {
+                    int col = field.Index % PlayAreaSize;
+                    int row = field.Index / PlayAreaSize;
+
+                    for (int i = -1; i < 2; i++)
+                        for (int j = -1; j < 2; j++)
+                        {
+                            if ((row + i < 0) || (row + i >= PlayAreaSize) || (col + j < 0) || (col + j >= PlayAreaSize))
+                                continue;
+                            var f = PlayArea[GetProperIndex(row + i, col + j)];
+                            if (!f.IsMine && f.Covered)
+                                f.increaseDangerLevel();
+                        }
+                }
             }
         }
-        private void RightButtonClick(object sender, RoutedEventArgs e)
+
+        private void UncoverAllFields()
+        {
+            foreach(var t in PlayArea)
+            {
+                if(t.IsSuspected)
+                {
+                    t.IsSuspected = false;
+                }
+                t.Covered = false;
+            }
+        }
+
+        private Field getModel(FieldControl field)
+        {
+            return PlayArea.Find(elem => elem.Index == field.FieldIndex);
+        }
+
+
+        private void RevealUncoveredFields(Field f)
+        {
+            if (f.DangerLevel > 0 && !f.IsMine)
+            {
+                f.Covered = false;
+                exposedFields++;
+            }
+            else if (f.DangerLevel == 0)
+            {
+                f.Covered = false;
+                exposedFields++;
+                int col = f.Index % PlayAreaSize;
+                int row = f.Index / PlayAreaSize;
+                for (int i = -1; i < 2; i++)
+                    for (int j = -1; j < 2; j++)
+                    {
+                        if ((row + i < 0) || (row + i >= PlayAreaSize) || (col + j < 0) || (col + j >= PlayAreaSize))
+                            continue;
+                        var field = PlayArea[GetProperIndex(row + i, col + j)];
+                        if (field.Covered && !field.IsSuspected)
+                            RevealUncoveredFields(field);
+                    }
+            }
+        }
+        private void LeftButtonClick(object sender)
         {
             var field = sender as FieldControl;
-            if(field.Suspected)
+            if (field.FieldCovered)
             {
-                field.Suspected = false;
-                field.FieldState = FieldStateTypes.Covered;
+                var m = getModel(field);
+                if(!firstClick)
+                {
+                    gameState = GameState.Run;
+                    IsGameGoing = true;
+                    m.FirstClicked = true;
+                    placeMines();
+                    if(!timer.IsEnabled)
+                    {
+                        timer.Start();
+                    }
+                    firstClick = true;
+                }
+                if (m.IsMine)
+                {
+                    gameState = GameState.Defeat;
+                    timer.Stop();
+                    m.Covered = false;
+                    IsGameGoing = false;
+                    UncoverAllFields();
+                }
+                else
+                {
+                    RevealUncoveredFields(m);
+                }
+
+                if(exposedFields == PlayAreaSizeSquared - MinesCount)
+                {
+                    gameState = GameState.Victory;
+                    timer.Stop();
+                }
+
             }
-            else if(!field.Suspected)
+        }
+        private void RightButtonClick(object sender)
+        {   if (firstClick)
             {
-                field.Suspected = true;
-                field.FieldState = FieldStateTypes.UnCovered;
+                var f = getModel(sender as FieldControl);
+
+                if(f.Covered && FlagCount > 0)
+                {
+                    f.IsSuspected = true;
+                    FlagCount--;
+                }
+                else if(f.IsSuspected)
+                {
+                    f.IsSuspected = false;
+                    FlagCount++;
+                }
             }
+        }
+        private void resetGame()
+        {
+            PlayAreaSizeSquared = PlayAreaSize * PlayAreaSize;
+            PlayArea = GeneratePlayArea();
+            firstClick = false;
+            IsGameGoing = false;
+            FlagCount = MinesCount;
+            gameState = GameState.Run;
+            timer.Stop();
+            GameTime = 0;
+        }
+        private void Button_Click(object sender)
+        {
+            resetGame();
         }
     }
 }

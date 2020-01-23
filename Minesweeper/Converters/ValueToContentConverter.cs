@@ -16,7 +16,7 @@ namespace Minesweeper.Converters
             {
                 case 0:
                     return "";
-                case 1000:
+                case 10000:
                     return "X";
                 case 1001:
                     return "?";

@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Minesweeper.Controls"
+    xmlns:converters="clr-namespace:Minesweeper.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Minesweeper"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,9 +12,14 @@
     Height="600"
     mc:Ignorable="d">
     <Window.Resources>
+        <FontFamily x:Key="segmentClockFont">/Minesweeper;component/Assets/#NI7SEG</FontFamily>
         <BitmapImage x:Key="backgroudImage" UriSource="/Minesweeper;component/Assets/background.png" />
+        <BitmapImage x:Key="smilingFace" UriSource="/Minesweeper;component/Assets/smilingFace.png" />
+        <BitmapImage x:Key="deadFace" UriSource="/Minesweeper;component/Assets/deadFace.png" />
+        <BitmapImage x:Key="swagFace" UriSource="/Minesweeper;component/Assets/faceWithGlasses.png" />
         <ImageBrush x:Key="backgroundImageBrush" ImageSource="{StaticResource backgroudImage}" />
         <SolidColorBrush x:Key="PlayFieldBrush" Color="#BE080830" />
+        <converters:IntToStringConverter x:Key="IntToStringConverter" />
     </Window.Resources>
     <Window.Style>
         <Style TargetType="{x:Type Window}">
@@ -26,9 +32,102 @@
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
         Background="{StaticResource PlayFieldBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Height="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <RadioButton
+                Grid.Column="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Command="{Binding RadioButtonChecked}"
+                CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Tag}"
+                Content="EASY"
+                Foreground="White"
+                IsChecked="True"
+                Tag="easy" />
 
+            <RadioButton
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Command="{Binding RadioButtonChecked}"
+                CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Tag}"
+                Content="INTERMEDIATE"
+                Foreground="White"
+                Tag="medium" />
+
+            <RadioButton
+                Grid.Column="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Command="{Binding RadioButtonChecked}"
+                CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Tag}"
+                Content="EXPERT"
+                Foreground="White"
+                Tag="hard" />
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                Padding="40,0,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource segmentClockFont}"
+                FontSize="34"
+                Foreground="WhiteSmoke"
+                Text="{Binding GameTime, Converter={StaticResource IntToStringConverter}}" />
+            <Button
+                Grid.Column="1"
+                Width="60"
+                Height="60"
+                VerticalAlignment="Center"
+                Command="{Binding ClickFaceButton}">
+
+                <Image>
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding gameState}" Value="{x:Static local:GameState.Defeat}">
+                                    <Setter Property="Source" Value="{StaticResource deadFace}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding gameState}" Value="{x:Static local:GameState.Run}">
+                                    <Setter Property="Source" Value="{StaticResource smilingFace}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding gameState}" Value="{x:Static local:GameState.Victory}">
+                                    <Setter Property="Source" Value="{StaticResource swagFace}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+            <TextBlock
+                Grid.Column="2"
+                Padding="0,0,40,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource segmentClockFont}"
+                FontSize="34"
+                Foreground="WhiteSmoke"
+                Text="{Binding FlagCount, Converter={StaticResource IntToStringConverter}}" />
+
+        </Grid>
         <ItemsControl
             x:Name="FieldHolder"
+            Grid.Row="2"
             Margin="20"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -37,13 +136,14 @@
                 <DataTemplate>
                     <controls:FieldControl
                         Margin="2"
-                        Click="LeftButtonClick"
-                        FieldCovered="{Binding Covered}"
+                        FieldCovered="{Binding Covered, Mode=TwoWay}"
                         FieldIndex="{Binding Index}"
-                        FieldValue="{Binding DangerLevel}"
+                        FieldValue="{Binding DangerLevel, Mode=TwoWay}"
                         IsMine="{Binding IsMine}"
-                        RightClick="RightButtonClick"
-                        Size="34" />
+                        LeftClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.LeftFieldClick}"
+                        RightClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RightFieldClick}"
+                        Size="34"
+                        Suspected="{Binding IsSuspected, Mode=TwoWay}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>

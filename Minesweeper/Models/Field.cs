@@ -12,6 +12,16 @@ namespace Minesweeper.Models
     {
         private bool _covered = true;
         private bool _isMine = false;
+        private int _fieldValue = 0;
+        private bool _isSuspected = false;
+
+
+
+
+
+
+        public bool FirstClicked { get; set; } = false;
+    
 
         public bool IsMine {
             get => _isMine;
@@ -21,7 +31,15 @@ namespace Minesweeper.Models
                 DangerLevel = 10000; 
             }
         }
-        public int DangerLevel { get; set; } = 0;
+        public int DangerLevel 
+        {
+            get => _fieldValue;
+            set
+            {
+                _fieldValue = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("DangerLevel"));
+            }
+        }
         public int Index { get; set; } = 0;
         public bool Covered {
             get => _covered;
@@ -30,6 +48,19 @@ namespace Minesweeper.Models
                 _covered = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Covered"));
             }
+        }
+
+        public bool IsSuspected { get => _isSuspected;
+            set
+            {
+                _isSuspected = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSuspected"));
+            }
+        }
+
+        public void increaseDangerLevel()
+        {
+            DangerLevel += 1;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

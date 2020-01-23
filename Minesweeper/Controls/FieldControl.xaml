@@ -35,10 +35,10 @@
                                 <Style TargetType="{x:Type Border}">
 
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldState}" Value="{x:Static local:FieldStateTypes.Covered}">
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldCovered}" Value="True">
                                             <Setter Property="BorderBrush" Value="WhiteSmoke" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldState}" Value="{x:Static local:FieldStateTypes.UnCovered}">
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldCovered}" Value="False">
                                             <Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldValue, Converter={StaticResource ValueToBrushConverter}}" />
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -54,10 +54,10 @@
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldState}" Value="{x:Static local:FieldStateTypes.Covered}">
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldCovered}" Value="True">
                     <Setter Property="Foreground" Value="Transparent" />
                 </DataTrigger>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldState}" Value="{x:Static local:FieldStateTypes.UnCovered}">
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldCovered}" Value="False">
                     <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldValue, Converter={StaticResource ValueToBrushConverter}}" />
                 </DataTrigger>
             </Style.Triggers>
@@ -65,11 +65,10 @@
     </UserControl.Resources>
 
     <Button
-        x:Name="mainButton"
         Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=Size}"
         Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=Size}"
-        Click="Button_Click"
+        Click="Button_LeftClick"
         Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldValue, Converter={StaticResource ValueToContentConverter}}"
-        MouseRightButtonUp="Button_MouseRightButtonUp"
+        MouseRightButtonUp="Button_RightClick"
         Style="{StaticResource FieldControlStyle}" />
 </UserControl>
