@@ -5,8 +5,10 @@
     xmlns:controls="clr-namespace:Minesweeper.Controls"
     xmlns:converters="clr-namespace:Minesweeper.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enums="clr-namespace:Minesweeper.Enums"
     xmlns:local="clr-namespace:Minesweeper"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:Minesweeper.ViewModels"
     Title="MainWindow"
     Width="800"
     Height="600"
@@ -26,6 +28,9 @@
             <Setter Property="Background" Value="{StaticResource backgroundImageBrush}" />
         </Style>
     </Window.Style>
+    <Window.DataContext>
+        <viewmodels:MainWindowViewModel />
+    </Window.DataContext>
     <Grid
         Width="Auto"
         Height="Auto"
@@ -47,7 +52,7 @@
                 Grid.Column="0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Command="{Binding RadioButtonChecked}"
+                Command="{Binding DifficultyLevelChange}"
                 CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Tag}"
                 Content="EASY"
                 Foreground="White"
@@ -58,7 +63,7 @@
                 Grid.Column="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Command="{Binding RadioButtonChecked}"
+                Command="{Binding DifficultyLevelChange}"
                 CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Tag}"
                 Content="INTERMEDIATE"
                 Foreground="White"
@@ -68,7 +73,7 @@
                 Grid.Column="2"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Command="{Binding RadioButtonChecked}"
+                Command="{Binding DifficultyLevelChange}"
                 CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Tag}"
                 Content="EXPERT"
                 Foreground="White"
@@ -94,19 +99,19 @@
                 Width="60"
                 Height="60"
                 VerticalAlignment="Center"
-                Command="{Binding ClickFaceButton}">
+                Command="{Binding FaceButtonClick}">
 
                 <Image>
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding gameState}" Value="{x:Static local:GameState.Defeat}">
+                                <DataTrigger Binding="{Binding GameState}" Value="{x:Static enums:GameState.Defeat}">
                                     <Setter Property="Source" Value="{StaticResource deadFace}" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding gameState}" Value="{x:Static local:GameState.Run}">
+                                <DataTrigger Binding="{Binding GameState}" Value="{x:Static enums:GameState.Running}">
                                     <Setter Property="Source" Value="{StaticResource smilingFace}" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding gameState}" Value="{x:Static local:GameState.Victory}">
+                                <DataTrigger Binding="{Binding GameState}" Value="{x:Static enums:GameState.Victory}">
                                     <Setter Property="Source" Value="{StaticResource swagFace}" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -140,8 +145,8 @@
                         FieldIndex="{Binding Index}"
                         FieldValue="{Binding DangerLevel, Mode=TwoWay}"
                         IsMine="{Binding IsMine}"
-                        LeftClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.LeftFieldClick}"
-                        RightClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RightFieldClick}"
+                        LeftClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.LeftButtonFieldClick}"
+                        RightClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RightButtonFieldClick}"
                         Size="34"
                         Suspected="{Binding IsSuspected, Mode=TwoWay}" />
                 </DataTemplate>
