@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Minesweeper.Models;
 using System.Windows.Threading;
 using System.ComponentModel;
+using System.Timers;
 
 namespace Minesweeper {
 
@@ -80,14 +81,14 @@ namespace Minesweeper {
                 _LeftFieldClick = value;
             }
         }
-
+        private readonly Timer timer;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private int _flagCount;
         public int MinesCount { get; set; }  // Ilość min na planszy
 
         public int FlagCount { get => _flagCount; set { _flagCount = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FlagCount")); } }
-        private DispatcherTimer timer { get; set; }
+        //private DispatcherTimer timer { get; set; }
 
         private int _gameTime = 0;
 
@@ -99,9 +100,8 @@ namespace Minesweeper {
             ClickFaceButton = new RelayCommand(Button_Click, param => true);
             LeftFieldClick = new RelayCommand(LeftButtonClick, param => true);
             RightFieldClick = new RelayCommand(RightButtonClick, param => true);
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += Timer_Tick;
+            timer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
+            timer.Elapsed += Timer_Tick;
             DataContext = this;
             ChangeGameMode("easy");
             
@@ -127,7 +127,7 @@ namespace Minesweeper {
             resetGame();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object sender, ElapsedEventArgs e)
         {
 
             GameTime += 1;
@@ -247,7 +247,7 @@ namespace Minesweeper {
                     IsGameGoing = true;
                     m.FirstClicked = true;
                     placeMines();
-                    if(!timer.IsEnabled)
+                    if (!timer.Enabled)
                     {
                         timer.Start();
                     }
