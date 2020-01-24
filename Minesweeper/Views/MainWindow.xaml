@@ -100,6 +100,34 @@
                 Height="60"
                 VerticalAlignment="Center"
                 Command="{Binding FaceButtonClick}">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="SnapsToDevicePixels" Value="true" />
+                        <Setter Property="OverridesDefaultStyle" Value="true" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border
+                                        x:Name="Border"
+                                        Background="Transparent"
+                                        BorderThickness="1.5"
+                                        BorderBrush="WhiteSmoke"
+                                        CornerRadius="5">
+                                        <ContentPresenter
+                                            Margin="2"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#66FFFFFF" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
 
                 <Image>
                     <Image.Style>
