@@ -223,11 +223,15 @@ namespace Minesweeper.ViewModels
                 {
                     ShowCoveredFields(field);
                 }
-                if(ExposedFields == (PlayAreaSizeSquared - MineCount))
-                {
-                    GameState = Enums.GameState.Victory;
-                    Timer.Stop();
-                }
+                CheckVictory();
+            }
+        }
+        private void CheckVictory()
+        {
+            if (ExposedFields == (PlayAreaSizeSquared - MineCount))
+            {
+                GameState = Enums.GameState.Victory;
+                Timer.Stop();
             }
         }
         private void RightButtonField_Click(object sender)
@@ -245,6 +249,7 @@ namespace Minesweeper.ViewModels
                     field.IsSuspected = false;
                     FlagCount++;
                 }
+                CheckVictory();
             }
         }
     }
