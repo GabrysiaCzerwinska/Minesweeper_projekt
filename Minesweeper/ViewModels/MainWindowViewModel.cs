@@ -161,7 +161,7 @@ namespace Minesweeper.ViewModels
                             continue;
                         var f = PlayArea[Get1DIndex(row + i, col + j)];
                         if (!f.IsMine && f.Covered)
-                            f.increaseDangerLevel();
+                            f.IncreaseDangerLevel();
                     }
             }
         }

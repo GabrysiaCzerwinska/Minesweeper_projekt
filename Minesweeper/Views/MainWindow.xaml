@@ -110,8 +110,8 @@
                                     <Border
                                         x:Name="Border"
                                         Background="Transparent"
-                                        BorderThickness="1.5"
                                         BorderBrush="WhiteSmoke"
+                                        BorderThickness="1.5"
                                         CornerRadius="5">
                                         <ContentPresenter
                                             Margin="2"
