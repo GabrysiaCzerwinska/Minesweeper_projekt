@@ -159,7 +159,6 @@ namespace Minesweeper
             }
         }
 
-
         public void exposeHiddenFields(int row, int column)
         {
             Field field = board[row, column];

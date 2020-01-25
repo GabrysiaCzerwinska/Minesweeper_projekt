@@ -25,6 +25,7 @@ namespace Minesweeper
 
             timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
         }
+
         public void OnTimedEvent(Object sender, ElapsedEventArgs e)
         {
             gameLength = new DateTime(e.SignalTime.Year, e.SignalTime.Month, e.SignalTime.Day, e.SignalTime.Hour, e.SignalTime.Minute, e.SignalTime.Second) - todaysDate;
