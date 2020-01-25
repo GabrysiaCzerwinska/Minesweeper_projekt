@@ -2,7 +2,7 @@
 
 ## Wstęp
 Jest to aplikacja napisana w języku C#, przy użyciu technologi [Windows Presentation Foundation](https://docs.microsoft.com/pl-pl/dotnet/framework/wpf/).
-Aplikacja, jest drugą wersją realizującą ten sam temat kierując się innymi kryteriami niż wersja [alpha](../blob/develop)(duży nacisk na MVVM). Oczywiście logika aplikacji jest przeniesiona z wersji [alpha](https://github.com/GabrysiaCzerwinska/Minesweeper_projekt/tree/develop/Minesweeper/).
+Aplikacja, jest drugą wersją realizującą ten sam temat kierując się innymi kryteriami niż wersja [alpha](https://github.com/GabrysiaCzerwinska/Minesweeper_projekt/tree/develop)(duży nacisk na MVVM). Oczywiście logika aplikacji jest przeniesiona z wersji [alpha](https://github.com/GabrysiaCzerwinska/Minesweeper_projekt/tree/develop).
 ## Wygląd
 ![alt text](https://github.com/GabrysiaCzerwinska/Minesweeper_projekt/blob/master/screenshot.png "It looks cool :P")
 
@@ -52,5 +52,5 @@ Klasa jest odpowiedzialna za dostarczenie odpowiednich informacji dla widoku, im
 * `CheckVictory()` - sprawdza czy gra została wygrana
 * `RightButtonField_Click(object sender)` -  obsługuje kliknięcie prawego przycisku mszki na polu.
 * `LeftButtonField_Down(object sender)` - obsługuje wciśnięcie lewego przycisku mszki na polu.
-###MainWindow
+### MainWindow
 Klasa reprezentuje widok aplikacji. Wszystko jest tutaj zapisane w XAMLu a odpowiednie dane są zbindowane do ViewModelu.
