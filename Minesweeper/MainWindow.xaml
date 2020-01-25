@@ -5,12 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minesweeper"
         mc:Ignorable="d"
-        Title="Cyber Minesweeper 2077" Height="800" Width="960" Background="#FF080830">
-    <Grid x:Name="grid1" Height="760" Width="960" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-        <Button x:Name="normal" Content="Normal" HorizontalAlignment="Center" Margin="-0,60,0,0" VerticalAlignment="Top" Height="40" Width="80"/>
-        <Button x:Name="easy" Content="Easy" HorizontalAlignment="Left" Margin="100,60,0,0" VerticalAlignment="Top" Height="40" Width="80"/>
-        <Button x:Name="hard" Content="Hard" HorizontalAlignment="Right" Margin="0,60,100,0" VerticalAlignment="Top" Height="40" Width="80"/>
-        <TextBlock x:Name="TimerBox" HorizontalAlignment="Left" Height="23" Margin="100,20,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Background="#FF080830" Foreground="White"/>
-        <Grid x:Name="grid" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20" Height="600" Width="900" Background="MidnightBlue"/>
+        Title="Cyber Minesweeper 2077"
+        Width="960" Height="800" Background="#FF080830">
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="834" Height="594">
+        <Grid x:Name="boardGrid" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="594" Height="594"/>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Width="240" Height="594">
+            <Button x:Name="beginnerButton" Content="Intermediate" HorizontalAlignment="Center" VerticalAlignment="Top" Width="80" Height="40" Background="MidnightBlue" Foreground="White"/>
+            <Button x:Name="intermediateButton" Content="Beginner" HorizontalAlignment="Center" VerticalAlignment="Top" Width="80" Height="40" Margin="0, 60, 0, 0" Background="MidnightBlue" Foreground="White"/>
+            <Button x:Name="expertButton" Content="Expert" HorizontalAlignment="Center" VerticalAlignment="Top" Width="80" Height="40" Margin="0, 120, 0, 0" Background="MidnightBlue" Foreground="White"/>
+            <TextBox x:Name="timerBox" HorizontalAlignment="Center" VerticalAlignment="Top" Width="120" Height="20" BorderThickness="0" Margin="0, 180, 0, 0" Background="#FF080830" Foreground="White" TextAlignment="Center" TextWrapping="Wrap"/>
+            <TextBox x:Name="statusBox" HorizontalAlignment="Center" VerticalAlignment="Top" Width="120" Height="20" BorderThickness="0" Margin="0, 220, 0, 0" Background="#FF080830" TextAlignment="Center" TextWrapping="Wrap"/>
+        </Grid>
     </Grid>
 </Window>
