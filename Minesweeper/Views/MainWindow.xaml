@@ -168,14 +168,14 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <controls:FieldControl
-                        Margin="2"
+                        Margin="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.FieldMargin, Mode=OneWay}"
                         FieldCovered="{Binding Covered, Mode=TwoWay}"
                         FieldIndex="{Binding Index}"
                         FieldValue="{Binding DangerLevel, Mode=TwoWay}"
                         IsMine="{Binding IsMine}"
                         LeftClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.LeftButtonFieldClick}"
                         RightClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RightButtonFieldClick}"
-                        Size="34"
+                        Size="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.FieldSize, Mode=OneWay}"
                         Suspected="{Binding IsSuspected, Mode=TwoWay}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

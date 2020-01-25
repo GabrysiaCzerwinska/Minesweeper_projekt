@@ -74,6 +74,12 @@ namespace Minesweeper.ViewModels
         public ICommand FaceButtonClick { get; set; }
         #endregion
         #endregion
+
+        private double fieldSize;
+        public double FieldSize { get => fieldSize;  set { fieldSize = value; NotifyPropertyChanged(); } }
+        private double fieldMargin;
+        public double FieldMargin { get => fieldMargin; set { fieldMargin = value; NotifyPropertyChanged(); } }
+
         public MainWindowViewModel()
         {
             Timer = new System.Timers.Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
@@ -82,7 +88,9 @@ namespace Minesweeper.ViewModels
             LeftButtonFieldClick = new RelayCommand(LeftButtonField_Click);
             RightButtonFieldClick = new RelayCommand(RightButtonField_Click);
             FaceButtonClick = new RelayCommand(o => ResetGame());
+            FieldMargin = 1;
             ChangeGameMode("easy"); // start with easy mode
+            
         }
         private void ChangeGameMode(object o)
         {
@@ -90,13 +98,19 @@ namespace Minesweeper.ViewModels
             {
                 case "easy":
                     PlayAreaSize = 8;
+                    FieldMargin = 1;
+                    FieldSize = 34;
                     MineCount = FlagCount = 10;
                     break;
                 case "medium":
                     PlayAreaSize = 16;
+                    FieldMargin = 1;
+                    FieldSize = 30;
                     MineCount = FlagCount = 40;
                     break;
                 case "hard":
+                    FieldSize = 21.5;
+                    FieldMargin = .5;
                     PlayAreaSize = 22;
                     MineCount = FlagCount = 100;
                     break;
