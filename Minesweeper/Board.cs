@@ -1,5 +1,6 @@
 ﻿using Mineswepper;
 using System;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,16 +13,18 @@ namespace Minesweeper
         public int size;
         public int mineNumber;
         public int exposedFieldsNumber;
-        public TextBox statusBox;
+        public TextBlock statusBlock;
+        public Timer timer;
         public Grid boardGrid;
         public Field[,] board;
 
-        public Board(int _size, int _mineNumber, TextBox _statusBox, Grid _boardGrid)
+        public Board(int _size, int _mineNumber, TextBlock _statusBlock, Timer _timer, Grid _boardGrid)
         {
             size = _size;
             mineNumber = _mineNumber;
             exposedFieldsNumber = 0;
-            statusBox = _statusBox;
+            statusBlock = _statusBlock;
+            timer = _timer;
             boardGrid = _boardGrid;
 
             board = new Field[size, size];
@@ -211,8 +214,10 @@ namespace Minesweeper
                 {
                     exposeAllFields();
 
-                    statusBox.Foreground = Brushes.Red;
-                    statusBox.Text = "You lost!";
+                    statusBlock.Foreground = Brushes.Red;
+                    statusBlock.Text = "You lost!";
+
+                    timer.Stop();
                 }
                 else if (field.dangerLevel > 0)
                 {
@@ -229,8 +234,10 @@ namespace Minesweeper
                 {
                     exposeAllFields();
 
-                    statusBox.Foreground = Brushes.Green;
-                    statusBox.Text = "You win!";
+                    statusBlock.Foreground = Brushes.Green;
+                    statusBlock.Text = "You win!";
+
+                    timer.Stop();
                 }
             }
 
