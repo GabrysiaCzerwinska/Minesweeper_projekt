@@ -67,8 +67,9 @@
     <Button
         Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=Size}"
         Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=Size}"
-        Click="Button_LeftClick"
         Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:FieldControl}}, Path=FieldValue, Converter={StaticResource ValueToContentConverter}}"
         MouseRightButtonUp="Button_RightClick"
+        PreviewMouseLeftButtonDown="Button_MouseLeftButtonDown"
+        PreviewMouseLeftButtonUp="Button_LeftClick"
         Style="{StaticResource FieldControlStyle}" />
 </UserControl>

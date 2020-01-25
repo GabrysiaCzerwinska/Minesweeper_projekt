@@ -19,7 +19,7 @@ namespace Minesweeper.Converters
                 case 1: return Brushes.Orchid;
                 case 2: return Brushes.MediumOrchid;
                 case 3: return Brushes.DarkOrchid;
-                case 1000: return Brushes.Crimson; // bomba
+                case 10000: return Brushes.Crimson; // bomba
                 case 1001: return Brushes.Aquamarine; // pytajnik
                 default: return Brushes.DarkMagenta;
             }

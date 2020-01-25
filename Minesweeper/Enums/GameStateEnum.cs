@@ -4,6 +4,7 @@
     {
         Running,
         Defeat,
-        Victory
+        Victory,
+        UserClick
     }
 }

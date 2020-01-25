@@ -117,5 +117,8 @@
     <Resource Include="Assets\faceWithGlasses.png" />
     <Resource Include="Assets\deadFace.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\suprisedFace.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

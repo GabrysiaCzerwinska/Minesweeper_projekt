@@ -12,6 +12,7 @@ using Minesweeper.Enums;
 using System.Windows.Input;
 using Minesweeper.Controls;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Minesweeper.ViewModels
 {
@@ -76,6 +77,7 @@ namespace Minesweeper.ViewModels
         public ICommand LeftButtonFieldClick { get; set; }
         public ICommand RightButtonFieldClick { get; set; }
         public ICommand FaceButtonClick { get; set; }
+        public ICommand FieldButtonDown { get; set; }
         #endregion
         #endregion
         public MainWindowViewModel()
@@ -86,6 +88,7 @@ namespace Minesweeper.ViewModels
             LeftButtonFieldClick = new RelayCommand(LeftButtonField_Click);
             RightButtonFieldClick = new RelayCommand(RightButtonField_Click);
             FaceButtonClick = new RelayCommand(o => ResetGame());
+            FieldButtonDown = new RelayCommand(LeftButtonField_Down, o => IsGameRunning);
             PlayArea = new ObservableCollection<Field>();
             ChangeGameMode("easy"); // start with easy mode
         }
@@ -102,13 +105,13 @@ namespace Minesweeper.ViewModels
                 case "medium":
                     PlayAreaSize = 16;
                     FieldMargin = 1;
-                    FieldSize = 26;
+                    FieldSize = 23.5;
                     MineCount = FlagCount = 40;
                     break;
                 case "hard":
                     PlayAreaSize = 22;
                     FieldMargin = .5;
-                    FieldSize = 20;
+                    FieldSize = 20.5;
                     MineCount = FlagCount = 100;
                     break;
             }
@@ -140,7 +143,7 @@ namespace Minesweeper.ViewModels
                 var lastElem = PlayArea.LastOrDefault();
                 if (lastElem != null)
                 {
-                    index = lastElem.Index;
+                    index = lastElem.Index + 1;
                 }
                 while (difference > 0)
                 {
@@ -158,7 +161,7 @@ namespace Minesweeper.ViewModels
                 }
             }
         }
-        private Field GetModel(FieldControl fieldControl) => PlayArea.Where(e => e.Index == fieldControl.FieldIndex).First();//.Find(e => e.Index == fieldControl.FieldIndex);
+        private Field GetModel(FieldControl fieldControl) => PlayArea.Where(e => e.Index == fieldControl.FieldIndex).First();
         private void PlaceMines()
         {
             Random randomGenerator = new Random();
@@ -237,6 +240,7 @@ namespace Minesweeper.ViewModels
 
         private void LeftButtonField_Click(object sender)
         {
+            GameState = Minesweeper.Enums.GameState.Running;
             Field field = GetModel(sender as FieldControl);
             if (field.Covered)
             {
@@ -288,6 +292,11 @@ namespace Minesweeper.ViewModels
                 }
                 CheckVictory();
             }
+        }
+        private void LeftButtonField_Down(object sender)
+        {
+            if(GetModel(sender as FieldControl).Covered)
+                GameState = Minesweeper.Enums.GameState.UserClick;
         }
     }
 }

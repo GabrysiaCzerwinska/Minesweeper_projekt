@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -116,7 +117,7 @@ namespace Minesweeper.Controls
             get => (ICommand)GetValue(LeftClickCommandProperty);
             set => SetValue(LeftClickCommandProperty, value);
         }
-        
+
         private void Button_LeftClick(object sender, RoutedEventArgs e) => LeftClickCommand.Execute(this);
         #endregion
 
@@ -128,7 +129,18 @@ namespace Minesweeper.Controls
             get => (ICommand)GetValue(RightClickCommandProperty);
             set => SetValue(RightClickCommandProperty, value);
         }
+
         private void Button_RightClick(object sender, MouseButtonEventArgs e) => RightClickCommand.Execute(this);
+        #endregion
+        #region Right Button Down
+        public static readonly DependencyProperty LeftButtonDownCommandProperty = DependencyProperty.Register(
+            "LeftButtonDownCommand", typeof(ICommand), typeof(FieldControl), new PropertyMetadata());
+        public ICommand LeftButtonDownCommand
+        {
+            get => (ICommand)GetValue(LeftButtonDownCommandProperty);
+            set => SetValue(LeftButtonDownCommandProperty, value);
+        }
+        private void Button_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => LeftButtonDownCommand.Execute(this);
         #endregion
     }
 }

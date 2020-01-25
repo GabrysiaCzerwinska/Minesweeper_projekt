@@ -9,20 +9,61 @@
     xmlns:local="clr-namespace:Minesweeper"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:Minesweeper.ViewModels"
-    Title="MainWindow"
-    Width="800"
-    Height="600"
+    Title="CyberMinesweeper 2022"
+    Width="1000"
+    Height="800"
     mc:Ignorable="d">
+
     <Window.Resources>
         <FontFamily x:Key="segmentClockFont">/Minesweeper;component/Assets/#NI7SEG</FontFamily>
         <BitmapImage x:Key="backgroudImage" UriSource="/Minesweeper;component/Assets/background.png" />
         <BitmapImage x:Key="smilingFace" UriSource="/Minesweeper;component/Assets/smilingFace.png" />
         <BitmapImage x:Key="deadFace" UriSource="/Minesweeper;component/Assets/deadFace.png" />
         <BitmapImage x:Key="swagFace" UriSource="/Minesweeper;component/Assets/faceWithGlasses.png" />
+        <BitmapImage x:Key="suprisedFace" UriSource="/Minesweeper;component/Assets/suprisedFace.png" />
         <ImageBrush x:Key="backgroundImageBrush" ImageSource="{StaticResource backgroudImage}" />
         <SolidColorBrush x:Key="PlayFieldBrush" Color="#BE080830" />
         <converters:IntToStringConverter x:Key="IntToStringConverter" />
+        <Style x:Key="radioButtonStyle" TargetType="{x:Type RadioButton}">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style x:Key="counterTextBlockStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{StaticResource segmentClockFont}" />
+            <Setter Property="FontSize" Value="34" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style x:Key="faceButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border
+                            x:Name="Border"
+                            Background="Transparent"
+                            BorderBrush="WhiteSmoke"
+                            BorderThickness="1.5"
+                            CornerRadius="5">
+                            <ContentPresenter
+                                Margin="2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#66FFFFFF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
+
     <Window.Style>
         <Style TargetType="{x:Type Window}">
             <Setter Property="Background" Value="{StaticResource backgroundImageBrush}" />
@@ -50,33 +91,27 @@
             </Grid.ColumnDefinitions>
             <RadioButton
                 Grid.Column="0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
                 Command="{Binding DifficultyLevelChange}"
                 CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Tag}"
                 Content="EASY"
-                Foreground="White"
                 IsChecked="True"
+                Style="{StaticResource radioButtonStyle}"
                 Tag="easy" />
 
             <RadioButton
                 Grid.Column="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
                 Command="{Binding DifficultyLevelChange}"
                 CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Tag}"
                 Content="INTERMEDIATE"
-                Foreground="White"
+                Style="{StaticResource radioButtonStyle}"
                 Tag="medium" />
 
             <RadioButton
                 Grid.Column="2"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
                 Command="{Binding DifficultyLevelChange}"
                 CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Tag}"
                 Content="EXPERT"
-                Foreground="White"
+                Style="{StaticResource radioButtonStyle}"
                 Tag="hard" />
         </Grid>
         <Grid Grid.Row="1">
@@ -88,47 +123,15 @@
             <TextBlock
                 Grid.Column="0"
                 Padding="40,0,0,0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontFamily="{StaticResource segmentClockFont}"
-                FontSize="34"
-                Foreground="WhiteSmoke"
+                Style="{StaticResource counterTextBlockStyle}"
                 Text="{Binding GameTime, Converter={StaticResource IntToStringConverter}}" />
             <Button
                 Grid.Column="1"
                 Width="60"
                 Height="60"
                 VerticalAlignment="Center"
-                Command="{Binding FaceButtonClick}">
-                <Button.Style>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="SnapsToDevicePixels" Value="true" />
-                        <Setter Property="OverridesDefaultStyle" Value="true" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type Button}">
-                                    <Border
-                                        x:Name="Border"
-                                        Background="Transparent"
-                                        BorderBrush="WhiteSmoke"
-                                        BorderThickness="1.5"
-                                        CornerRadius="5">
-                                        <ContentPresenter
-                                            Margin="2"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center" />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#66FFFFFF" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Style>
-
+                Command="{Binding FaceButtonClick}"
+                Style="{StaticResource faceButtonStyle}">
                 <Image>
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
@@ -142,6 +145,9 @@
                                 <DataTrigger Binding="{Binding GameState}" Value="{x:Static enums:GameState.Victory}">
                                     <Setter Property="Source" Value="{StaticResource swagFace}" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding GameState}" Value="{x:Static enums:GameState.UserClick}">
+                                    <Setter Property="Source" Value="{StaticResource suprisedFace}" />
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Image.Style>
@@ -150,13 +156,8 @@
             <TextBlock
                 Grid.Column="2"
                 Padding="0,0,40,0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontFamily="{StaticResource segmentClockFont}"
-                FontSize="34"
-                Foreground="WhiteSmoke"
+                Style="{StaticResource counterTextBlockStyle}"
                 Text="{Binding FlagCount, Converter={StaticResource IntToStringConverter}}" />
-
         </Grid>
         <ItemsControl
             x:Name="FieldHolder"
@@ -173,6 +174,7 @@
                         FieldIndex="{Binding Index}"
                         FieldValue="{Binding DangerLevel, Mode=TwoWay}"
                         IsMine="{Binding IsMine}"
+                        LeftButtonDownCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.FieldButtonDown}"
                         LeftClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.LeftButtonFieldClick}"
                         RightClickCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RightButtonFieldClick}"
                         Size="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.FieldSize, Mode=OneWay}"
@@ -185,6 +187,5 @@
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
-
     </Grid>
 </Window>
