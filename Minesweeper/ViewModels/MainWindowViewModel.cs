@@ -119,6 +119,7 @@ namespace Minesweeper.ViewModels
             PlayAreaSizeSquared = (int)Math.Pow(PlayAreaSize, 2);
             IsGameRunning = false;
             FlagCount = MineCount;
+            ExposedFields = 0;
             ResizePlayArea();
             ResetFields();
             GameState = Minesweeper.Enums.GameState.Running;
@@ -258,14 +259,15 @@ namespace Minesweeper.ViewModels
                 {
                     ShowCoveredFields(field);
                 }
-                CheckVictory();
             }
+            CheckVictory();
         }
         private void CheckVictory()
         {
             if (ExposedFields == (PlayAreaSizeSquared - MineCount))
             {
                 GameState = Enums.GameState.Victory;
+                IsGameRunning = false;
                 Timer.Stop();
             }
         }
