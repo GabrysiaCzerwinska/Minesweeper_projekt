@@ -1,5 +1,6 @@
 ﻿using Mineswepper;
 using System;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,15 +13,19 @@ namespace Minesweeper
         public int size;
         public int mineNumber;
         public int exposedFieldsNumber;
-        public Grid grid;
+        public TextBlock statusBlock;
+        public Timer timer;
+        public Grid boardGrid;
         public Field[,] board;
 
-        public Board(int _size, int _mineNumber, Grid _grid)
+        public Board(int _size, int _mineNumber, TextBlock _statusBlock, Timer _timer, Grid _boardGrid)
         {
             size = _size;
             mineNumber = _mineNumber;
             exposedFieldsNumber = 0;
-            grid = _grid;
+            statusBlock = _statusBlock;
+            timer = _timer;
+            boardGrid = _boardGrid;
 
             board = new Field[size, size];
 
@@ -64,19 +69,20 @@ namespace Minesweeper
 
         public void drawBoard()
         {
-            grid.Children.Clear();
-            grid.RowDefinitions.Clear();
-            grid.ColumnDefinitions.Clear();
+            boardGrid.Children.Clear();
+            boardGrid.RowDefinitions.Clear();
+            boardGrid.ColumnDefinitions.Clear();
 
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
-                    grid.RowDefinitions.Add(new RowDefinition()
+                    boardGrid.RowDefinitions.Add(new RowDefinition()
                     {
                         Height = new GridLength()
                     });
-                    grid.ColumnDefinitions.Add(new ColumnDefinition()
+
+                    boardGrid.ColumnDefinitions.Add(new ColumnDefinition()
                     {
                         Width = new GridLength()
                     });
@@ -145,7 +151,7 @@ namespace Minesweeper
                     button.Click += new RoutedEventHandler(handleLeftMouseButtonClick);
                     button.MouseDown += new MouseButtonEventHandler(handleRightMouseButtonClick);
 
-                    grid.Children.Add(button);
+                    boardGrid.Children.Add(button);
 
                     Grid.SetRow(button, i);
                     Grid.SetColumn(button, j);
@@ -207,7 +213,10 @@ namespace Minesweeper
                 {
                     exposeAllFields();
 
-                    Console.WriteLine("Przegrana!");
+                    statusBlock.Foreground = Brushes.Red;
+                    statusBlock.Text = "You lost!";
+
+                    timer.Stop();
                 }
                 else if (field.dangerLevel > 0)
                 {
@@ -224,7 +233,10 @@ namespace Minesweeper
                 {
                     exposeAllFields();
 
-                    Console.WriteLine("Wygrana!");
+                    statusBlock.Foreground = Brushes.Green;
+                    statusBlock.Text = "You win!";
+
+                    timer.Stop();
                 }
             }
 

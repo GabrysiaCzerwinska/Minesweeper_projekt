@@ -27,7 +27,7 @@
 
         public void changeSuspect()
         {
-            isSuspected = isSuspected ? false : true;
+            isSuspected = !isSuspected;
         }
 
         public void expose()
