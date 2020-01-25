@@ -29,7 +29,7 @@ Jest to klasa reprezentująca model "pola" na planszy do gry. Implementuje inter
 #### Metody
 * `IncreaseDangerLevel` - `void` zwiększa poziom zagrożenia pola.
 * `Reset` - `void` przywraca pole do wartości domyślnej.
-## MainWindowViewModel
+### MainWindowViewModel
 Klasa jest odpowiedzialna za dostarczenie odpowiednich informacji dla widoku, implementację całej logiki aplikacji a przede wszystkim ma scalać widok z modelem.
 #### Właściwości publiczne
 * `FieldMargin` - `double` określa wielkość marginesu wokół pola.
