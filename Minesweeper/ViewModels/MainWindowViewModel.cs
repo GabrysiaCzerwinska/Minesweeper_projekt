@@ -11,6 +11,7 @@ using Minesweeper.Models;
 using Minesweeper.Enums;
 using System.Windows.Input;
 using Minesweeper.Controls;
+using System.Collections.ObjectModel;
 
 namespace Minesweeper.ViewModels
 {
@@ -25,12 +26,7 @@ namespace Minesweeper.ViewModels
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         #endregion
         #region PlayArea Property
-        private List<Field> playArea;
-        public List<Field> PlayArea
-        {
-            get => playArea;
-            set { playArea = value; NotifyPropertyChanged(); }
-        }
+        public ObservableCollection<Field> PlayArea { get; set; }
         #endregion
         #region PlayAreaSize Property
         private int playAreaSize;
@@ -59,6 +55,14 @@ namespace Minesweeper.ViewModels
         }
         #endregion
         private int MineCount;
+        #region FieldSize Property
+        private double fieldSize;
+        public double FieldSize { get => fieldSize; set { fieldSize = value; NotifyPropertyChanged(); } }
+        #endregion
+        #region FieldMargin Property
+        private double fieldMargin;
+        public double FieldMargin { get => fieldMargin; set { fieldMargin = value; NotifyPropertyChanged(); } }
+        #endregion
         #region FlagCount Property
         private int flagCount;
         public int FlagCount
@@ -74,12 +78,6 @@ namespace Minesweeper.ViewModels
         public ICommand FaceButtonClick { get; set; }
         #endregion
         #endregion
-
-        private double fieldSize;
-        public double FieldSize { get => fieldSize;  set { fieldSize = value; NotifyPropertyChanged(); } }
-        private double fieldMargin;
-        public double FieldMargin { get => fieldMargin; set { fieldMargin = value; NotifyPropertyChanged(); } }
-
         public MainWindowViewModel()
         {
             Timer = new System.Timers.Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
@@ -88,9 +86,8 @@ namespace Minesweeper.ViewModels
             LeftButtonFieldClick = new RelayCommand(LeftButtonField_Click);
             RightButtonFieldClick = new RelayCommand(RightButtonField_Click);
             FaceButtonClick = new RelayCommand(o => ResetGame());
-            FieldMargin = 1;
+            PlayArea = new ObservableCollection<Field>();
             ChangeGameMode("easy"); // start with easy mode
-            
         }
         private void ChangeGameMode(object o)
         {
@@ -105,13 +102,13 @@ namespace Minesweeper.ViewModels
                 case "medium":
                     PlayAreaSize = 16;
                     FieldMargin = 1;
-                    FieldSize = 30;
+                    FieldSize = 26;
                     MineCount = FlagCount = 40;
                     break;
                 case "hard":
-                    FieldSize = 21.5;
-                    FieldMargin = .5;
                     PlayAreaSize = 22;
+                    FieldMargin = .5;
+                    FieldSize = 20;
                     MineCount = FlagCount = 100;
                     break;
             }
@@ -122,21 +119,45 @@ namespace Minesweeper.ViewModels
             PlayAreaSizeSquared = (int)Math.Pow(PlayAreaSize, 2);
             IsGameRunning = false;
             FlagCount = MineCount;
-            PlayArea = GeneratePlayArea();
+            ResizePlayArea();
+            ResetFields();
             GameState = Minesweeper.Enums.GameState.Running;
             Timer.Stop();
             GameTime = 0;
         }
-        private List<Field> GeneratePlayArea()
+        private void ResetFields()
         {
-            List<Field> result = new List<Field>(PlayAreaSizeSquared);
-            for (int i = 0; i < PlayAreaSizeSquared; ++i)
-            {
-                result.Add(new Field { Index = i });
-            }
-            return result;
+            foreach (Field f in PlayArea)
+                f.Reset();
         }
-        private Field GetModel(FieldControl fieldControl) => PlayArea.Find(e => e.Index == fieldControl.FieldIndex);
+        private void ResizePlayArea()
+        {
+            int difference = PlayAreaSizeSquared - PlayArea.Count();
+            if (difference > 0)
+            {
+                int index = 0;
+                var lastElem = PlayArea.LastOrDefault();
+                if (lastElem != null)
+                {
+                    index = lastElem.Index;
+                }
+                while (difference > 0)
+                {
+                    PlayArea.Add(new Field { Index = index });
+                    difference--;
+                    index++;
+                }
+            }
+            else if (difference < 0)
+            {
+                while(difference < 0)
+                {
+                    PlayArea.RemoveAt(PlayArea.Count() - 1);
+                    difference++;
+                }
+            }
+        }
+        private Field GetModel(FieldControl fieldControl) => PlayArea.Where(e => e.Index == fieldControl.FieldIndex).First();//.Find(e => e.Index == fieldControl.FieldIndex);
         private void PlaceMines()
         {
             Random randomGenerator = new Random();
@@ -190,12 +211,12 @@ namespace Minesweeper.ViewModels
         }
         private void ShowCoveredFields(Field f)
         {
-            if (f.DangerLevel > 0 && !f.IsMine)
+            if (f.DangerLevel > 0 && !f.IsMine && f.Covered)
             {
                 f.Covered = false;
                 ExposedFields++;
             }
-            else if (f.DangerLevel == 0)
+            else if (f.DangerLevel == 0 && f.Covered)
             {
                 f.Covered = false;
                 ExposedFields++;

@@ -45,5 +45,13 @@ namespace Minesweeper.Models
         }
         #endregion
         public void IncreaseDangerLevel() => DangerLevel += 1;
+
+        public void Reset()
+        {
+            Covered = true;
+            FirstClicked = false;
+            isSuspected = false;
+            DangerLevel = 0;
+        }
     }
 }
